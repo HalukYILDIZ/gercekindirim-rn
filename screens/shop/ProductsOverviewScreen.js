@@ -11,4 +11,6 @@ const ProductsOverviewScreen = props => {
     />
   );
 };
+
+export const screenOptions = {};
 export default ProductsOverviewScreen;
