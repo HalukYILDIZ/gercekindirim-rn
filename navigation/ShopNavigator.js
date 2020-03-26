@@ -1,5 +1,5 @@
 import React from 'react';
-import {createStackNavigator, HeaderTitle} from '@react-navigation/stack';
+import {createStackNavigator} from '@react-navigation/stack';
 import {createDrawerNavigator} from '@react-navigation/drawer';
 import {Platform} from 'react-native';
 
@@ -13,7 +13,7 @@ import Colors from '../constants/Colors';
 const ProductsStackNavigator = createStackNavigator();
 export const ProductsNavigator = () => {
   return (
-    <ProductsStackNavigator.Navigator>
+    <ProductsStackNavigator.Navigator screenOptions={screenOptions}>
       <ProductsStackNavigator.Screen
         name="ProductsOverview"
         component={ProductsOverviewScreen}
