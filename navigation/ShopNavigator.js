@@ -6,7 +6,9 @@ import {Platform} from 'react-native';
 import ProductsOverviewScreen, {
   screenOptions,
 } from '../screens/shop/ProductsOverviewScreen';
-import ProductDetailScreen from '../screens/shop/ProductDetailScreen';
+import ProductDetailScreen, {
+  screenOptionsD,
+} from '../screens/shop/ProductDetailScreen';
 import CartScreen from '../screens/shop/CartScreen';
 import Colors from '../constants/Colors';
 
@@ -22,6 +24,7 @@ export const ProductsNavigator = () => {
       <ProductsStackNavigator.Screen
         name="ProductDetail"
         component={ProductDetailScreen}
+        options={screenOptionsD}
       />
       <ProductsStackNavigator.Screen name="Cart" component={CartScreen} />
     </ProductsStackNavigator.Navigator>
