@@ -36,17 +36,18 @@ const ProductsOverviewScreen = props => {
 
 export const screenOptions = {
   headerTitle: 'All Products',
-  headerRight: () => {
+  //headerLeft: () => (),
+  headerRight: () => (
     <HeaderButtons HeaderButtonComponent={HeaderButton}>
       <Item
-        title="rocket"
-        iconName="rocket"
+        title="cart"
+        iconName="shopping-cart"
         onPress={() => {
           console.log('calış');
         }}
       />
-    </HeaderButtons>;
-  },
+    </HeaderButtons>
+  ),
   headerStyle: {
     backgroundColor: Colors.primary,
   },
