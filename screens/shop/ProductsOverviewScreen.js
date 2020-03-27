@@ -1,12 +1,16 @@
 import React from 'react';
 import {FlatList} from 'react-native';
-import {useSelector} from 'react-redux';
+import {useSelector, useDispatch} from 'react-redux';
+import {HeaderButtons, Item} from 'react-navigation-header-buttons';
 
 import ProductItem from '../../components/shop/ProductItem';
 import Colors from '../../constants/Colors';
+import * as cartActions from '../../store/actions/cart';
+import HeaderButton from '../../components/UI/HeaderButton';
 
 const ProductsOverviewScreen = props => {
   const products = useSelector(state => state.products.availableProducts);
+  const dispatch = useDispatch();
   return (
     <FlatList
       data={products}
@@ -21,7 +25,9 @@ const ProductsOverviewScreen = props => {
               productTitle: itemData.item.title,
             });
           }}
-          onAddToCart={() => {}}
+          onAddToCart={() => {
+            dispatch(cartActions.addToCart(itemData.item));
+          }}
         />
       )}
     />
@@ -30,6 +36,17 @@ const ProductsOverviewScreen = props => {
 
 export const screenOptions = {
   headerTitle: 'All Products',
+  headerRight: () => {
+    <HeaderButtons HeaderButtonComponent={HeaderButton}>
+      <Item
+        title="rocket"
+        iconName="rocket"
+        onPress={() => {
+          console.log('calış');
+        }}
+      />
+    </HeaderButtons>;
+  },
   headerStyle: {
     backgroundColor: Colors.primary,
   },
