@@ -5,7 +5,6 @@ import Colors from '../../constants/Colors';
 
 const ProductDetailScreen = props => {
   const productId = props.route.params.productId;
-  const productTitle = props.route.params.productTitle;
   const selectedProduct = useSelector(state =>
     state.products.availableProducts.find(item => item.id === productId),
   );
