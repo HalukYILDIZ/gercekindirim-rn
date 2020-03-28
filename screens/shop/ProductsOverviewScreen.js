@@ -34,29 +34,31 @@ const ProductsOverviewScreen = props => {
   );
 };
 
-export const screenOptions = {
-  headerTitle: 'All Products',
-  //headerLeft: () => (),
-  headerRight: () => (
-    <HeaderButtons HeaderButtonComponent={HeaderButton}>
-      <Item
-        title="cart"
-        iconName="shopping-cart"
-        onPress={() => {
-          console.log('calış');
-        }}
-      />
-    </HeaderButtons>
-  ),
-  headerStyle: {
-    backgroundColor: Colors.primary,
-  },
-  headerTitleStyle: {
-    fontFamily: 'OpenSans-Bold',
-  },
-  headerTintColor: 'white',
-  headerBackTitleStyle: {
-    fontFamily: 'OpenSans-Regular',
-  },
+export const screenOptions = navData => {
+  return {
+    headerTitle: 'All Products',
+    //headerLeft: () => (),
+    headerRight: () => (
+      <HeaderButtons HeaderButtonComponent={HeaderButton}>
+        <Item
+          title="cart"
+          iconName="shopping-cart"
+          onPress={() => {
+            navData.navigation.navigate('Cart');
+          }}
+        />
+      </HeaderButtons>
+    ),
+    headerStyle: {
+      backgroundColor: Colors.primary,
+    },
+    headerTitleStyle: {
+      fontFamily: 'OpenSans-Bold',
+    },
+    headerTintColor: 'white',
+    headerBackTitleStyle: {
+      fontFamily: 'OpenSans-Regular',
+    },
+  };
 };
 export default ProductsOverviewScreen;

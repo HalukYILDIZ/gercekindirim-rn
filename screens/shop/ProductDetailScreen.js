@@ -3,7 +3,6 @@ import {ScrollView, View, Image, Button, StyleSheet, Text} from 'react-native';
 import {useSelector, useDispatch} from 'react-redux';
 import * as cartActions from '../../store/actions/cart';
 import Colors from '../../constants/Colors';
-import Icon from 'react-native-vector-icons/FontAwesome';
 
 const ProductDetailScreen = props => {
   const productId = props.route.params.productId;
@@ -23,7 +22,7 @@ const ProductDetailScreen = props => {
           }}
         />
       </View>
-      <Icon name="rocket" size={30} color="#900" />
+
       <Text style={styles.price}>${selectedProduct.price.toFixed(2)}</Text>
       <Text style={styles.description}>{selectedProduct.description}</Text>
     </ScrollView>
