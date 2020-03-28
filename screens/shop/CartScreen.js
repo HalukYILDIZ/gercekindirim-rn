@@ -3,7 +3,10 @@ import {FlatList, Text, View, StyleSheet, Button} from 'react-native';
 import {useSelector, useDispatch} from 'react-redux';
 import Colors from '../../constants/Colors';
 import CartItem from '../../components/shop/CartItem';
-import * as carActions from '../../store/actions/cart';
+import * as cartActions from '../../store/actions/cart';
+import * as orderActions from '../../store/actions/order';
+import {HeaderButtons, Item} from 'react-navigation-header-buttons';
+import HeaderButton from '../../components/UI/HeaderButton';
 
 const CartScreen = props => {
   const cartTotalAmount = useSelector(state => state.cart.totalAmount); //.cart çünkü App de cart diye tanımladık reducerı
@@ -35,6 +38,9 @@ const CartScreen = props => {
           color={Colors.accent}
           title="Order Now"
           disabled={cartItems.length === 0}
+          onPress={() => {
+            dispatch(orderActions.addOrder(cartItems, cartTotalAmount));
+          }}
         />
       </View>
       <FlatList
@@ -46,13 +52,29 @@ const CartScreen = props => {
             title={itemData.item.productTitle}
             amount={itemData.item.sum}
             onRemove={() => {
-              dispatch(carActions.removeFromCart(itemData.item.productId));
+              dispatch(cartActions.removeFromCart(itemData.item.productId));
             }}
           />
         )}
       />
     </View>
   );
+};
+export const screenOptions = navData => {
+  return {
+    headerTitle: 'Your Cart',
+    headerLeft: () => (
+      <HeaderButtons HeaderButtonComponent={HeaderButton}>
+        <Item
+          title="Menu"
+          iconName="bars"
+          onPress={() => {
+            navData.navigation.toggleDrawer();
+          }}
+        />
+      </HeaderButtons>
+    ),
+  };
 };
 
 const styles = StyleSheet.create({
