@@ -32,7 +32,10 @@ const CartScreen = props => {
       <View style={styles.summary}>
         <Text style={styles.summaryText}>
           Total:{' '}
-          <Text style={styles.amount}>${cartTotalAmount.toFixed(2)}</Text>
+          <Text style={styles.amount}>
+            ${Math.round(cartTotalAmount.toFixed(2) * 100) / 100}
+            {/* küsürat nedeniyle toplamın -0.00 olmasını engellemek için kullandık */}
+          </Text>
         </Text>
         <Button
           color={Colors.accent}
@@ -63,17 +66,17 @@ const CartScreen = props => {
 export const screenOptions = navData => {
   return {
     headerTitle: 'Your Cart',
-    headerLeft: () => (
-      <HeaderButtons HeaderButtonComponent={HeaderButton}>
-        <Item
-          title="Menu"
-          iconName="bars"
-          onPress={() => {
-            navData.navigation.toggleDrawer();
-          }}
-        />
-      </HeaderButtons>
-    ),
+    // headerLeft: () => (
+    //   <HeaderButtons HeaderButtonComponent={HeaderButton}>
+    //     <Item
+    //       title="Menu"
+    //       iconName="bars"
+    //       onPress={() => {
+    //         navData.navigation.toggleDrawer();
+    //       }}
+    //     />
+    //   </HeaderButtons>
+    // ),
   };
 };
 

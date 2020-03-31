@@ -17,12 +17,12 @@ import CartScreen, {
 import OrdersScreen, {
   screenOptions as ordersScreenOptions,
 } from '../screens/shop/OrdersScreen';
-//import UserProductsScreen, {
-//  screenOptions as userProductsScreenOptions,
-//} from '../screens/user/UserProductsScreen';
-//import EditProductScreen, {
-//  screenOptions as editProductScreenOptions,
-//} from '../screens/user/EditProductScreen';
+import UserProductsScreen, {
+  screenOptions as userProductsScreenOptions,
+} from '../screens/user/UserProductsScreen';
+import EditProductScreen, {
+  screenOptions as editProductScreenOptions,
+} from '../screens/user/EditProductScreen';
 //import AuthScreen, {
 //  screenOptions as authScreenOptions,
 //} from '../screens/user/AuthScreen';
@@ -35,10 +35,10 @@ const defaultNavOptions = {
     backgroundColor: Platform.OS === 'android' ? Colors.primary : '',
   },
   headerTitleStyle: {
-    fontFamily: 'open-sans-bold',
+    fontFamily: 'OpenSans-Bold',
   },
   headerBackTitleStyle: {
-    fontFamily: 'open-sans',
+    fontFamily: 'OpenSans-Regular',
   },
   headerTintColor: Platform.OS === 'android' ? 'white' : Colors.primary,
 };
@@ -119,24 +119,24 @@ export const OrdersNavigator = () => {
 //   }
 // );
 
-// const AdminStackNavigator = createStackNavigator();
+const AdminStackNavigator = createStackNavigator();
 
-// export const AdminNavigator = () => {
-//   return (
-//     <AdminStackNavigator.Navigator screenOptions={defaultNavOptions}>
-//       <AdminStackNavigator.Screen
-//         name="UserProducts"
-//         component={UserProductsScreen}
-//         options={userProductsScreenOptions}
-//       />
-//       <AdminStackNavigator.Screen
-//         name="EditProduct"
-//         component={EditProductScreen}
-//         options={editProductScreenOptions}
-//       />
-//     </AdminStackNavigator.Navigator>
-//   );
-// };
+export const AdminNavigator = () => {
+  return (
+    <AdminStackNavigator.Navigator screenOptions={defaultNavOptions}>
+      <AdminStackNavigator.Screen
+        name="UserProducts"
+        component={UserProductsScreen}
+        options={userProductsScreenOptions}
+      />
+      <AdminStackNavigator.Screen
+        name="EditProduct"
+        component={EditProductScreen}
+        options={editProductScreenOptions}
+      />
+    </AdminStackNavigator.Navigator>
+  );
+};
 
 // const AdminNavigator = createStackNavigator(
 //   {
@@ -202,7 +202,7 @@ export const ShopNavigator = () => {
           ),
         }}
       />
-      {/*
+
       <ShopDrawerNavigator.Screen
         name="Admin"
         component={AdminNavigator}
@@ -211,7 +211,7 @@ export const ShopNavigator = () => {
             <Icon name="rocket" size={23} color={props.color} />
           ),
         }}
-      /> */}
+      />
     </ShopDrawerNavigator.Navigator>
   );
 };

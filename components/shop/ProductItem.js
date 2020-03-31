@@ -17,7 +17,7 @@ const ProductItem = props => {
     TouchableCmp = TouchableNativeFeedback;
   }
   return (
-    <TouchableCmp onPress={props.onViewDetail}>
+    <TouchableCmp onPress={props.onSelect}>
       <View style={styles.product}>
         <View style={styles.imageContainer}>
           <Image style={styles.image} source={{uri: props.image}} />
@@ -27,18 +27,7 @@ const ProductItem = props => {
           <Text style={styles.price}>${props.price.toFixed(2)}</Text>
         </View>
         {/*toFixed noktadan sonra iki hane olmasını sağlıyor */}
-        <View style={styles.button}>
-          <Button
-            color={Colors.primary}
-            title="View Details"
-            onPress={props.onViewDetail}
-          />
-          <Button
-            color={Colors.primary}
-            title="To Cart"
-            onPress={props.onAddToCart}
-          />
-        </View>
+        <View style={styles.button}>{props.children}</View>
       </View>
     </TouchableCmp>
   );
