@@ -4,6 +4,7 @@ import {HeaderButtons, Item} from 'react-navigation-header-buttons';
 import {useSelector, useDispatch} from 'react-redux';
 
 import HeaderButton from '../../components/UI/HeaderButton';
+import * as productsActions from '../../store/actions/products';
 //import Input from '../../components/UI/Input';
 
 const FORM_INPUT_UPDATE = 'FORM_INPUT_UPDATE';
@@ -38,6 +39,8 @@ const EditProductScreen = props => {
     state.products.userProducts.find(prod => prod.id === prodId),
   );
 
+  const dispatch = useDispatch();
+
   const [title, setTitle] = useState(editedProduct ? editedProduct.title : '');
   const [imageUrl, setImageUrl] = useState(
     editedProduct ? editedProduct.imageUrl : '',
@@ -48,8 +51,18 @@ const EditProductScreen = props => {
   );
 
   const submitHandler = useCallback(() => {
-    console.log('Submitting!');
-  }, []);
+    console.log(editedProduct);
+    if (editedProduct) {
+      dispatch(
+        productsActions.updateProduct(prodId, title, description, imageUrl),
+      );
+    } else {
+      dispatch(
+        productsActions.createProduct(title, description, imageUrl, +price),
+      );
+    }
+    props.navigation.goBack();
+  }, [dispatch, prodId, title, description, imageUrl, price]);
 
   useEffect(() => {
     props.navigation.setParams({submit: submitHandler});
