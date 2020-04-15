@@ -1,21 +1,10 @@
-import React, {useState, useEffect, useCallback, useReducer} from 'react';
-import {
-  View,
-  ScrollView,
-  StyleSheet,
-  Platform,
-  Alert,
-  KeyboardAvoidingView,
-  ActivityIndicator,
-  Text,
-} from 'react-native';
+import React, {useState, useEffect, useCallback} from 'react';
+import {View, ScrollView, StyleSheet, TextInput, Text} from 'react-native';
 import {HeaderButtons, Item} from 'react-navigation-header-buttons';
 import {useSelector, useDispatch} from 'react-redux';
 
 import HeaderButton from '../../components/UI/HeaderButton';
-import * as productsActions from '../../store/actions/products';
 //import Input from '../../components/UI/Input';
-import Colors from '../../constants/Colors';
 
 const FORM_INPUT_UPDATE = 'FORM_INPUT_UPDATE';
 
@@ -43,112 +32,68 @@ const formReducer = (state, action) => {
 };
 
 const EditProductScreen = props => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState();
-
   const prodId = props.route.params ? props.route.params.productId : null;
+
   const editedProduct = useSelector(state =>
     state.products.userProducts.find(prod => prod.id === prodId),
   );
-  const dispatch = useDispatch();
 
-  const [formState, dispatchFormState] = useReducer(formReducer, {
-    inputValues: {
-      title: editedProduct ? editedProduct.title : '',
-      imageUrl: editedProduct ? editedProduct.imageUrl : '',
-      description: editedProduct ? editedProduct.description : '',
-      price: '',
-    },
-    inputValidities: {
-      title: editedProduct ? true : false,
-      imageUrl: editedProduct ? true : false,
-      description: editedProduct ? true : false,
-      price: editedProduct ? true : false,
-    },
-    formIsValid: editedProduct ? true : false,
-  });
-
-  useEffect(() => {
-    if (error) {
-      Alert.alert('An error occurred!', error, [{text: 'Okay'}]);
-    }
-  }, [error]);
-
-  const submitHandler = useCallback(async () => {
-    if (!formState.formIsValid) {
-      Alert.alert('Wrong input!', 'Please check the errors in the form.', [
-        {text: 'Okay'},
-      ]);
-      return;
-    }
-    setError(null);
-    setIsLoading(true);
-    try {
-      if (editedProduct) {
-        await dispatch(
-          productsActions.updateProduct(
-            prodId,
-            formState.inputValues.title,
-            formState.inputValues.description,
-            formState.inputValues.imageUrl,
-          ),
-        );
-      } else {
-        await dispatch(
-          productsActions.createProduct(
-            formState.inputValues.title,
-            formState.inputValues.description,
-            formState.inputValues.imageUrl,
-            +formState.inputValues.price, // + stringi integer a dönüştürmek için kullandık
-          ),
-        );
-      }
-      props.navigation.goBack();
-    } catch (err) {
-      setError(err.message);
-    }
-
-    setIsLoading(false);
-  }, [dispatch, prodId, formState]);
-
-  useEffect(() => {
-    props.navigation.setOptions({
-      headerRight: () => (
-        <HeaderButtons HeaderButtonComponent={HeaderButton}>
-          <Item
-            title="Save"
-            iconName={
-              Platform.OS === 'android' ? 'check-square-o' : 'check-square-o'
-            }
-            onPress={submitHandler}
-          />
-        </HeaderButtons>
-      ),
-    });
-  }, [submitHandler]);
-
-  const inputChangeHandler = useCallback(
-    (inputIdentifier, inputValue, inputValidity) => {
-      dispatchFormState({
-        type: FORM_INPUT_UPDATE,
-        value: inputValue,
-        isValid: inputValidity,
-        input: inputIdentifier,
-      });
-    },
-    [dispatchFormState],
+  const [title, setTitle] = useState(editedProduct ? editedProduct.title : '');
+  const [imageUrl, setImageUrl] = useState(
+    editedProduct ? editedProduct.imageUrl : '',
+  );
+  const [price, setPrice] = useState('');
+  const [description, setDescription] = useState(
+    editedProduct ? editedProduct.description : '',
   );
 
-  if (isLoading) {
-    return (
-      <View style={styles.centered}>
-        <ActivityIndicator size="large" color={Colors.primary} />
-      </View>
-    );
-  }
+  const submitHandler = useCallback(() => {
+    console.log('Submitting!');
+  }, []);
+
+  useEffect(() => {
+    props.navigation.setParams({submit: submitHandler});
+  }, [submitHandler]);
 
   return (
-    <Text>EDİT</Text>
+    <ScrollView>
+      <View style={styles.form}>
+        <View style={styles.formControl}>
+          <Text style={styles.label}>Title</Text>
+          <TextInput
+            style={styles.input}
+            value={title}
+            onChangeText={text => setTitle(text)}
+          />
+        </View>
+        <View style={styles.formControl}>
+          <Text style={styles.label}>Image URL</Text>
+          <TextInput
+            style={styles.input}
+            value={imageUrl}
+            onChangeText={text => setImageUrl(text)}
+          />
+        </View>
+        {editedProduct ? null : (
+          <View style={styles.formControl}>
+            <Text style={styles.label}>Price</Text>
+            <TextInput
+              style={styles.input}
+              value={price}
+              onChangeText={text => setPrice(text)}
+            />
+          </View>
+        )}
+        <View style={styles.formControl}>
+          <Text style={styles.label}>Description</Text>
+          <TextInput
+            style={styles.input}
+            value={description}
+            onChangeText={text => setDescription(text)}
+          />
+        </View>
+      </View>
+    </ScrollView>
     // <KeyboardAvoidingView
     //   style={{flex: 1}}
     //   behavior="padding"
@@ -214,8 +159,14 @@ const EditProductScreen = props => {
 
 export const screenOptions = navData => {
   const routeParams = navData.route.params ? navData.route.params : {};
+  const submitfn = navData.route.params ? routeParams.submit : {};
   return {
     headerTitle: routeParams.productId ? 'Edit Product' : 'Add Product',
+    headerRight: () => (
+      <HeaderButtons HeaderButtonComponent={HeaderButton}>
+        <Item title="Add" iconName={'save'} onPress={submitfn} />
+      </HeaderButtons>
+    ),
   };
 };
 
@@ -223,11 +174,22 @@ const styles = StyleSheet.create({
   form: {
     margin: 20,
   },
-  centered: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+  formControl: {
+    width: '100%',
   },
+  label: {fontFamily: 'OpenSans-Bold', marginVertical: 8},
+  input: {
+    paddingHorizontal: 2,
+    paddingVertical: 5,
+    borderBottomColor: '#ccc',
+    borderBottomWidth: 1,
+  },
+
+  // centered: {
+  //   flex: 1,
+  //   justifyContent: 'center',
+  //   alignItems: 'center',
+  // },
 });
 
 export default EditProductScreen;
