@@ -1,5 +1,12 @@
-import React, {useEffect} from 'react';
-import {FlatList, Button} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {
+  FlatList,
+  Button,
+  View,
+  ActivityIndicator,
+  StyleSheet,
+  Text,
+} from 'react-native';
 import {useSelector, useDispatch} from 'react-redux';
 import {HeaderButtons, Item} from 'react-navigation-header-buttons';
 
@@ -10,18 +17,53 @@ import * as productsActions from '../../store/actions/products';
 import HeaderButton from '../../components/UI/HeaderButton';
 
 const ProductsOverviewScreen = props => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState();
   const products = useSelector(state => state.products.availableProducts);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(productsActions.fetchProducts());
+    const loadProducts = async () => {
+      setIsLoading(true);
+      try {
+        await dispatch(productsActions.fetchProducts());
+      } catch (err) {
+        setError(err.message);
+      }
+
+      setIsLoading(false);
+    };
+    loadProducts();
   }, [dispatch]);
+
   const selectItemHandler = (id, title) => {
     props.navigation.navigate('ProductDetail', {
       productId: id,
       productTitle: title,
     });
   };
+  if (error) {
+    return (
+      <View style={styles.centered}>
+        <Text>An error occured!</Text>
+      </View>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <View style={styles.centered}>
+        <ActivityIndicator size="large" color={Colors.primary} />
+      </View>
+    );
+  }
+  if (!isLoading && products.length === 0) {
+    return (
+      <View style={styles.centered}>
+        <Text>No products found. Start adding some!</Text>
+      </View>
+    );
+  }
 
   return (
     <FlatList
@@ -91,4 +133,12 @@ export const screenOptions = navData => {
     },
   };
 };
+const styles = StyleSheet.create({
+  centered: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+});
+
 export default ProductsOverviewScreen;
