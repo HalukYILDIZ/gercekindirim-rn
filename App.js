@@ -1,6 +1,7 @@
 import React from 'react';
-import {createStore, combineReducers} from 'redux';
+import {createStore, combineReducers, applyMiddleware} from 'redux';
 import {Provider} from 'react-redux';
+import ReduxThunk from 'redux-thunk';
 //import {composeWithDevTools} from 'redux-devtools-extension';
 
 import productReducer from './store/reducers/products';
@@ -14,7 +15,7 @@ const rootReducer = combineReducers({
   orders: ordersReducer,
 });
 
-const store = createStore(rootReducer); //, composeWithDevTools()); //deploy öncesi compose silinmeli
+const store = createStore(rootReducer, applyMiddleware(ReduxThunk)); //, composeWithDevTools()); //deploy öncesi compose silinmeli
 
 const App = () => {
   return (
