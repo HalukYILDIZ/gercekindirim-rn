@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useCallback} from 'react';
 import {
   FlatList,
   Button,
@@ -18,23 +18,39 @@ import HeaderButton from '../../components/UI/HeaderButton';
 
 const ProductsOverviewScreen = props => {
   const [isLoading, setIsLoading] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [error, setError] = useState();
   const products = useSelector(state => state.products.availableProducts);
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    const loadProducts = async () => {
-      setIsLoading(true);
-      try {
-        await dispatch(productsActions.fetchProducts());
-      } catch (err) {
-        setError(err.message);
-      }
+  const loadProducts = useCallback(async () => {
+    setError(null);
+    setIsRefreshing(true);
+    try {
+      await dispatch(productsActions.fetchProducts());
+    } catch (err) {
+      setError(err.message);
+    }
+    setIsRefreshing(false);
+  }, [dispatch, setIsRefreshing, setError]);
 
-      setIsLoading(false);
+  useEffect(() => {
+    const willFocusSub = props.navigation.addListener(
+      'willFocus',
+      loadProducts,
+    );
+
+    return () => {
+      willFocusSub.remove();
     };
-    loadProducts();
-  }, [dispatch]);
+  }, [loadProducts]);
+
+  useEffect(() => {
+    setIsLoading(true);
+    loadProducts().then(() => {
+      setIsLoading(false);
+    });
+  }, [dispatch, loadProducts]);
 
   const selectItemHandler = (id, title) => {
     props.navigation.navigate('ProductDetail', {
@@ -42,10 +58,16 @@ const ProductsOverviewScreen = props => {
       productTitle: title,
     });
   };
+
   if (error) {
     return (
       <View style={styles.centered}>
-        <Text>An error occured!</Text>
+        <Text>An error occurred!</Text>
+        <Button
+          title="Try again"
+          onPress={loadProducts}
+          color={Colors.primary}
+        />
       </View>
     );
   }
@@ -57,17 +79,21 @@ const ProductsOverviewScreen = props => {
       </View>
     );
   }
+
   if (!isLoading && products.length === 0) {
     return (
       <View style={styles.centered}>
-        <Text>No products found. Start adding some!</Text>
+        <Text>No products found. Maybe start adding some!</Text>
       </View>
     );
   }
 
   return (
     <FlatList
+      onRefresh={loadProducts}
+      refreshing={isRefreshing}
       data={products}
+      keyExtractor={item => item.id}
       renderItem={itemData => (
         <ProductItem
           image={itemData.item.imageUrl}
