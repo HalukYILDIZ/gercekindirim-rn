@@ -4,9 +4,9 @@ import {useSelector, useDispatch} from 'react-redux';
 import Colors from '../../constants/Colors';
 import CartItem from '../../components/shop/CartItem';
 import * as cartActions from '../../store/actions/cart';
-import * as orderActions from '../../store/actions/order';
-import {HeaderButtons, Item} from 'react-navigation-header-buttons';
-import HeaderButton from '../../components/UI/HeaderButton';
+import * as orderActions from '../../store/actions/orders';
+//import {HeaderButtons, Item} from 'react-navigation-header-buttons';
+//import HeaderButton from '../../components/UI/HeaderButton';
 import Card from '../../components/UI/Card';
 
 const CartScreen = props => {
