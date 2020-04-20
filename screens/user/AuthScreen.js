@@ -1,10 +1,12 @@
-import React, {useState, useReducer, useCallback} from 'react';
+import React, {useState, useEffect, useReducer, useCallback} from 'react';
 import {
   ScrollView,
-  Button,
+  View,
   KeyboardAvoidingView,
   StyleSheet,
-  View,
+  Button,
+  ActivityIndicator,
+  Alert,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import {useDispatch} from 'react-redux';
@@ -13,6 +15,7 @@ import Input from '../../components/UI/Input';
 import Card from '../../components/UI/Card';
 import Colors from '../../constants/Colors';
 import * as authActions from '../../store/actions/auth';
+
 const FORM_INPUT_UPDATE = 'FORM_INPUT_UPDATE';
 
 const formReducer = (state, action) => {
@@ -39,8 +42,10 @@ const formReducer = (state, action) => {
 };
 
 const AuthScreen = props => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState();
+  const [isSignup, setIsSignup] = useState(false);
   const dispatch = useDispatch();
-  const [isSignUp, setIsSignUp] = useState(false);
 
   const [formState, dispatchFormState] = useReducer(formReducer, {
     inputValues: {
@@ -53,21 +58,34 @@ const AuthScreen = props => {
     },
     formIsValid: false,
   });
-  const authHandler = () => {
-    if (isSignUp) {
-      dispatch(
-        authActions.signup(
-          formState.inputValues.email,
-          formState.inputValues.password,
-        ),
+
+  useEffect(() => {
+    if (error) {
+      Alert.alert('An Error Occurred!', error, [{text: 'Okay'}]);
+    }
+  }, [error]);
+
+  const authHandler = async () => {
+    let action;
+    if (isSignup) {
+      action = authActions.signup(
+        formState.inputValues.email,
+        formState.inputValues.password,
       );
     } else {
-      dispatch(
-        authActions.login(
-          formState.inputValues.email,
-          formState.inputValues.password,
-        ),
+      action = authActions.login(
+        formState.inputValues.email,
+        formState.inputValues.password,
       );
+    }
+    setError(null);
+    setIsLoading(true);
+    try {
+      await dispatch(action);
+      props.navigation.navigate('Shop');
+    } catch (err) {
+      setError(err.message);
+      setIsLoading(false);
     }
   };
 
@@ -90,45 +108,49 @@ const AuthScreen = props => {
       style={styles.screen}>
       <LinearGradient
         colors={['white', Colors.primary, Colors.primary]}
-        style={styles.linearGradient}>
+        style={styles.gradient}>
         <Card style={styles.authContainer}>
           <ScrollView>
             <Input
               id="email"
-              label="email"
+              label="E-Mail"
               keyboardType="email-address"
               required
               email
               autoCapitalize="none"
-              errorText="Pleasse enter a valid email address."
+              errorText="Please enter a valid email address."
               onInputChange={inputChangeHandler}
               initialValue=""
             />
             <Input
               id="password"
-              label="password"
+              label="Password"
               keyboardType="default"
               secureTextEntry
               required
               minLength={5}
               autoCapitalize="none"
-              errorText="Pleasse enter a valid password."
+              errorText="Please enter a valid password."
               onInputChange={inputChangeHandler}
               initialValue=""
             />
             <View style={styles.buttonContainer}>
-              <Button
-                title={isSignUp ? 'Sign Up' : 'Login'}
-                color={Colors.primary}
-                onPress={authHandler}
-              />
+              {isLoading ? (
+                <ActivityIndicator size="small" color={Colors.primary} />
+              ) : (
+                <Button
+                  title={isSignup ? 'Sign Up' : 'Login'}
+                  color={Colors.primary}
+                  onPress={authHandler}
+                />
+              )}
             </View>
             <View style={styles.buttonContainer}>
               <Button
-                title={`Switch to ${isSignUp ? 'Login' : 'Sign Up'}`}
+                title={`Switch to ${isSignup ? 'Login' : 'Sign Up'}`}
                 color={Colors.accent}
                 onPress={() => {
-                  setIsSignUp(prevState => !prevState);
+                  setIsSignup(prevState => !prevState);
                 }}
               />
             </View>
@@ -144,22 +166,23 @@ export const screenOptions = {
 };
 
 const styles = StyleSheet.create({
-  linearGradient: {
+  screen: {
     flex: 1,
-    width: '100%',
-    height: '100%',
+  },
+  gradient: {
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  buttonContainer: {
-    marginTop: 10,
-  },
-  screen: {flex: 1},
   authContainer: {
     width: '80%',
     maxWidth: 400,
     maxHeight: 400,
     padding: 20,
   },
+  buttonContainer: {
+    marginTop: 10,
+  },
 });
+
 export default AuthScreen;
