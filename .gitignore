@@ -57,3 +57,6 @@ buck-out/
 
 # CocoaPods
 /ios/Pods/
+
+# aPİKEYS
+/constants/ApiKeys.js

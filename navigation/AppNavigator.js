@@ -2,7 +2,7 @@ import React from 'react';
 //import {useSelector} from 'react-redux';
 import {NavigationContainer} from '@react-navigation/native';
 
-import {ShopNavigator} from './ShopNavigator';
+import {ShopNavigator, AuthNavigator} from './ShopNavigator';
 //import StartupScreen from '../screens/StartupScreen';
 
 const AppNavigator = props => {
@@ -11,8 +11,9 @@ const AppNavigator = props => {
 
   return (
     <NavigationContainer>
-      <ShopNavigator />
-      {/* <AuthNavigator /> */}
+      <AuthNavigator />
+      {/* <ShopNavigator /> */}
+
       {/* <StartupScreen /> */}
     </NavigationContainer>
   );
