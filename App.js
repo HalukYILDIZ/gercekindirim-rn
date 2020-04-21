@@ -6,10 +6,12 @@ import ReduxThunk from 'redux-thunk';
 
 import productReducer from './store/reducers/products';
 import cartReducer from './store/reducers/cart';
+import authReducer from './store/reducers/auth';
 import ordersReducer from './store/reducers/orders';
 import AppNavigator from './navigation/AppNavigator';
 
 const rootReducer = combineReducers({
+  auth: authReducer,
   products: productReducer,
   cart: cartReducer,
   orders: ordersReducer,
