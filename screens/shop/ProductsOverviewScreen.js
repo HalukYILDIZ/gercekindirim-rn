@@ -1,11 +1,12 @@
 import React, {useEffect, useState, useCallback} from 'react';
 import {
+  View,
+  Text,
   FlatList,
   Button,
-  View,
+  Platform,
   ActivityIndicator,
   StyleSheet,
-  Text,
 } from 'react-native';
 import {useSelector, useDispatch} from 'react-redux';
 import {HeaderButtons, Item} from 'react-navigation-header-buttons';
@@ -32,16 +33,13 @@ const ProductsOverviewScreen = props => {
       setError(err.message);
     }
     setIsRefreshing(false);
-  }, [dispatch, setIsRefreshing, setError]);
+  }, [dispatch, setError]);
 
   useEffect(() => {
-    const willFocusSub = props.navigation.addListener(
-      'willFocus',
-      loadProducts,
-    );
+    const unsubscribe = props.navigation.addListener('focus', loadProducts);
 
     return () => {
-      willFocusSub.remove();
+      unsubscribe();
     };
   }, [loadProducts]);
 

@@ -3,7 +3,7 @@ import {createStackNavigator} from '@react-navigation/stack';
 import {createDrawerNavigator, DrawerItemList} from '@react-navigation/drawer';
 import {Platform, SafeAreaView, Button, View} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-//import {useDispatch} from 'react-redux';
+import {useDispatch} from 'react-redux';
 
 import ProductsOverviewScreen, {
   screenOptions as productsOverviewScreenOptions,
@@ -26,10 +26,9 @@ import EditProductScreen, {
 import AuthScreen, {
   screenOptions as authScreenOptions,
 } from '../screens/user/AuthScreen';
-//import StartupScreen from '../screens/StartupScreen';
 import Colors from '../constants/Colors';
 
-//import * as authActions from '../store/actions/auth';
+import * as authActions from '../store/actions/auth';
 
 const defaultNavOptions = {
   headerStyle: {
@@ -161,7 +160,7 @@ export const AdminNavigator = () => {
 const ShopDrawerNavigator = createDrawerNavigator();
 
 export const ShopNavigator = () => {
-  // const dispatch = useDispatch();
+  const dispatch = useDispatch();
 
   return (
     <ShopDrawerNavigator.Navigator
@@ -174,7 +173,7 @@ export const ShopNavigator = () => {
                 title="Logout"
                 color={Colors.primary}
                 onPress={() => {
-                  // dispatch(authActions.logout());
+                  dispatch(authActions.logout());
                   // props.navigation.navigate('Auth');
                 }}
               />

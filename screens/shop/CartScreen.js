@@ -1,16 +1,24 @@
-import React from 'react';
-import {FlatList, Text, View, StyleSheet, Button} from 'react-native';
+import React,{useState} from 'react';
+import {
+  FlatList,
+  Text,
+  View,
+  StyleSheet,
+  Button,
+  ActivityIndicator,
+} from 'react-native';
 import {useSelector, useDispatch} from 'react-redux';
+
 import Colors from '../../constants/Colors';
 import CartItem from '../../components/shop/CartItem';
 import * as cartActions from '../../store/actions/cart';
-import * as orderActions from '../../store/actions/orders';
-//import {HeaderButtons, Item} from 'react-navigation-header-buttons';
-//import HeaderButton from '../../components/UI/HeaderButton';
+import * as ordersActions from '../../store/actions/orders';
 import Card from '../../components/UI/Card';
 
 const CartScreen = props => {
-  const cartTotalAmount = useSelector(state => state.cart.totalAmount); //.cart çünkü App de cart diye tanımladık reducerı
+  const [isLoading, setIsLoading] = useState(false);
+
+  const cartTotalAmount = useSelector(state => state.cart.totalAmount);
   const cartItems = useSelector(state => {
     const transformedCartItems = [];
     for (const key in state.cart.items) {
@@ -22,12 +30,18 @@ const CartScreen = props => {
         sum: state.cart.items[key].sum,
       });
     }
-
     return transformedCartItems.sort((a, b) =>
       a.productId > b.productId ? 1 : -1,
     );
   });
   const dispatch = useDispatch();
+
+  const sendOrderHandler = async () => {
+    setIsLoading(true);
+    await dispatch(ordersActions.addOrder(cartItems, cartTotalAmount));
+    setIsLoading(false);
+  };
+
   return (
     <View style={styles.screen}>
       <Card style={styles.summary}>
@@ -35,17 +49,18 @@ const CartScreen = props => {
           Total:{' '}
           <Text style={styles.amount}>
             ${Math.round(cartTotalAmount.toFixed(2) * 100) / 100}
-            {/* küsürat nedeniyle toplamın -0.00 olmasını engellemek için kullandık */}
           </Text>
         </Text>
-        <Button
-          color={Colors.accent}
-          title="Order Now"
-          disabled={cartItems.length === 0}
-          onPress={() => {
-            dispatch(orderActions.addOrder(cartItems, cartTotalAmount));
-          }}
-        />
+        {isLoading ? (
+          <ActivityIndicator size="small" color={Colors.primary} />
+        ) : (
+          <Button
+            color={Colors.accent}
+            title="Order Now"
+            disabled={cartItems.length === 0}
+            onPress={sendOrderHandler}
+          />
+        )}
       </Card>
       <FlatList
         data={cartItems}
@@ -55,6 +70,7 @@ const CartScreen = props => {
             quantity={itemData.item.quantity}
             title={itemData.item.productTitle}
             amount={itemData.item.sum}
+            deletable
             onRemove={() => {
               dispatch(cartActions.removeFromCart(itemData.item.productId));
             }}
@@ -67,17 +83,6 @@ const CartScreen = props => {
 export const screenOptions = navData => {
   return {
     headerTitle: 'Your Cart',
-    // headerLeft: () => (
-    //   <HeaderButtons HeaderButtonComponent={HeaderButton}>
-    //     <Item
-    //       title="Menu"
-    //       iconName="bars"
-    //       onPress={() => {
-    //         navData.navigation.toggleDrawer();
-    //       }}
-    //     />
-    //   </HeaderButtons>
-    // ),
   };
 };
 

@@ -4,14 +4,15 @@ export const ADD_ORDER = 'ADD_ORDER';
 export const SET_ORDERS = 'SET_ORDERS';
 
 export const fetchOrders = () => {
-  return async dispatch => {
+  return async (dispatch, getState) => {
+    const userId = getState().auth.userId;
     try {
       const response = await fetch(
-        'https://gercekindirim-rn.firebaseio.com/orders/u1.json',
+        `https://gercekindirim-rn.firebaseio.com/orders/${userId}.json`,
       );
 
       if (!response.ok) {
-        throw new Error('Something went wrong!');
+        throw new Error('Something went wrongo3!');
       }
 
       const resData = await response.json();
@@ -35,10 +36,12 @@ export const fetchOrders = () => {
 };
 
 export const addOrder = (cartItems, totalAmount) => {
-  return async dispatch => {
+  return async (dispatch, getState) => {
+    const token = getState().auth.token;
+    const userId = getState().auth.userId;
     const date = new Date();
     const response = await fetch(
-      'https://gercekindirim-rn.firebaseio.com/orders/u1.json',
+      `https://gercekindirim-rn.firebaseio.com/orders/${userId}.json?auth=${token}`,
       {
         method: 'POST',
         headers: {
@@ -53,7 +56,7 @@ export const addOrder = (cartItems, totalAmount) => {
     );
 
     if (!response.ok) {
-      throw new Error('Something went wrong!');
+      throw new Error('Something went wrong04!');
     }
 
     const resData = await response.json();

@@ -6,13 +6,16 @@ export const UPDATE_PRODUCT = 'UPDATE_PRODUCT';
 export const SET_PRODUCTS = 'SET_PRODUCTS';
 
 export const fetchProducts = () => {
-  return async dispatch => {
+  return async (dispatch, getState) => {
+    // any async code you want!
+    const userId = getState().auth.userId;
     try {
       const response = await fetch(
         'https://gercekindirim-rn.firebaseio.com/products.json',
       );
+
       if (!response.ok) {
-        throw new Error('Something went wrong!');
+        throw new Error('Something went wrongp5!');
       }
 
       const resData = await response.json();
@@ -22,7 +25,7 @@ export const fetchProducts = () => {
         loadedProducts.push(
           new Product(
             key,
-            'u1',
+            resData[key].ownerId,
             resData[key].title,
             resData[key].imageUrl,
             resData[key].description,
@@ -34,30 +37,37 @@ export const fetchProducts = () => {
       dispatch({
         type: SET_PRODUCTS,
         products: loadedProducts,
+        userProducts: loadedProducts.filter(prod => prod.ownerId === userId),
       });
     } catch (err) {
+      // send to custom analytics server
       throw err;
     }
   };
 };
 
 export const deleteProduct = productId => {
-  return async (dispatch,getState) => {
+  return async (dispatch, getState) => {
     const token = getState().auth.token;
-    const response= await fetch(
+    const response = await fetch(
       `https://gercekindirim-rn.firebaseio.com/products/${productId}.json?auth=${token}`,
       {
         method: 'DELETE',
       },
     );
 
+    if (!response.ok) {
+      throw new Error('Something went wrongp6!');
+    }
     dispatch({type: DELETE_PRODUCT, pid: productId});
   };
 };
 
 export const createProduct = (title, description, imageUrl, price) => {
-  return async (dispatch,getState) => {
+  return async (dispatch, getState) => {
+    // any async code you want!
     const token = getState().auth.token;
+    const userId = getState().auth.userId;
     const response = await fetch(
       `https://gercekindirim-rn.firebaseio.com/products.json?auth=${token}`,
       {
@@ -70,11 +80,13 @@ export const createProduct = (title, description, imageUrl, price) => {
           description,
           imageUrl,
           price,
+          ownerId: userId,
         }),
       },
     );
 
     const resData = await response.json();
+
     dispatch({
       type: CREATE_PRODUCT,
       productData: {
@@ -83,6 +95,7 @@ export const createProduct = (title, description, imageUrl, price) => {
         description,
         imageUrl,
         price,
+        ownerId: userId,
       },
     });
   };
@@ -105,6 +118,10 @@ export const updateProduct = (id, title, description, imageUrl) => {
         }),
       },
     );
+
+    if (!response.ok) {
+      throw new Error('Something went wrongp7!');
+    }
 
     dispatch({
       type: UPDATE_PRODUCT,

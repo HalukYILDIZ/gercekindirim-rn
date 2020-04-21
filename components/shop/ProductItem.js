@@ -64,12 +64,12 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   title: {
-    fontFamily: 'open-sans-bold',
+    fontFamily: 'OpenSans-Bold',
     fontSize: 18,
     marginVertical: 2,
   },
   price: {
-    fontFamily: 'open-sans',
+    fontFamily: 'OpenSans-Regular',
     fontSize: 14,
     color: '#888',
   },
